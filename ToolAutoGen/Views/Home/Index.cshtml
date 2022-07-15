@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="row" style="margin-top:20px">
+    <form action="/Home/Connect" method="post" id="frmConnect" class="form-horizontal">
+        <div class="col-md-12" style="margin-bottom:10px">
+            <div class="col-md-3">
+                <input class="form-control" placeholder="UserName" id="UserName" required name="UserName" value="" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Password" id="Password" required name="Password" value="" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" placeholder="ServiceName" id="ServiceName" required name="ServiceName" value="" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Host" id="Host" required name="Host" value="" />
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Port" id="Port" required name="Port" value="1521"/>
+            </div>
+            <div class="col-md-6">
+                <input class="form-control" placeholder="Tên Packages muốn đặt" id="PackagesName" required name="PackagesName" value="xxx" />
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-info"> Kết nối</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,215 @@
+﻿@model IEnumerable<ToolAutoGen.Models.TableView>
+
+@{
+    ViewBag.Title = "GenPackage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row" id="gentable">
+    <h2>Danh sách table db</h2> <button class="btn btn-default" onclick="getTable('tblGenTable')">Create package</button>
+    <button class="btn btn-default" onclick="getType('tblGenTable')">Get Type</button>
+    <div class="col-md-8">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="tblGenTable">
+                <tr>
+                    <th> <input name="chk[]" type="checkbox" onchange="checkAll(this)" /></th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Object_Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Object_Type)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <input name="chkbox[]" value="@item.Object_Name" type="checkbox" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Object_Name)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Object_Type)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+   
+        <button class="btn btn-default" onclick="myFunction('#typetable')">Copy</button>
+        <p id="typetable"></p>
+    
+</div>
+<div class="row">
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#Package">Package</a></li>
+        <li><a data-toggle="tab" href="#PackageParm">Package Parmater</a></li>
+        <li><a data-toggle="tab" href="#clsModel">class Model</a></li>
+        <li><a data-toggle="tab" href="#DBBase">DBBase</a></li>
+        <li><a data-toggle="tab" href="#StrConnect"> Chuỗi Connect</a></li>
+        <li><a data-toggle="tab" href="#Dao"> Dao</a></li>
+        <li><a data-toggle="tab" href="#Response"> Response</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="Package" class="tab-pane fade in active">
+            <h3>Package</h3>
+            <p id="PackageLab"></p>
+        </div>
+        <div id="PackageParm" class="tab-pane fade">
+            <h3>Response</h3>
+            <p id="PackageParmLab"></p>
+        </div>
+        <div id="clsModel" class="tab-pane fade">
+            <h3>class Model</h3>
+            <p id="clsModelLab"></p>
+        </div>
+        <div id="DBBase" class="tab-pane fade">
+            <h3>DBBase</h3>
+            <p id="DBBaseLab"></p>
+        </div>
+        <div id="StrConnect" class="tab-pane fade">
+            <h3>Chuỗi Connect</h3>
+            <p id="StrConnectLab"></p>
+        </div>
+        <div id="Dao" class="tab-pane fade">
+            <h3>Dao</h3>
+            <p id="DaoLab"></p>
+        </div>
+        <div id="Response" class="tab-pane fade">
+            <h3>Response</h3>
+            <p id="ResponseLab"></p>
+        </div>
+    </div>
+</div>
+@section scripts{
+
+    <script>
+        function checkAll(ele) {
+            var checkboxes = document.getElementsByTagName('input');
+            if (ele.checked) {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].type == 'checkbox') {
+                        checkboxes[i].checked = true;
+                    }
+                }
+            } else {
+                for (var i = 0; i < checkboxes.length; i++) {
+                    console.log(i)
+                    if (checkboxes[i].type == 'checkbox') {
+                        checkboxes[i].checked = false;
+                    }
+                }
+            }
+        }
+        function getTable(tableID) {
+            var table = document.getElementById(tableID);
+            var rowCount = table.rows.length;
+            var data;
+            for (var i = 1; i < rowCount; i++) {
+                var row = table.rows[i];
+                var chkbox = row.cells[0].children[0];
+                if (chkbox != null && chkbox.checked == true) {
+                    data += chkbox.value + "#";
+                }
+            }
+            var rootChkbox = table.rows[0].cells[0].children[0];
+            if (rowCount == 1) rootChkbox.checked = false;
+            let ojbData = {
+                data: data,
+            };
+            $.ajax({
+                url: '/Home/GenTablePackage',
+                type: 'POST',
+                cache: false,
+                async: true,
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify(ojbData),
+                success: function (result) {
+                    console.log(result);
+
+                    $("#gentable").hide();
+                    $("#ProfileCode").empty();
+                    $("#PackageLab").html(result.data);
+                    $("#clsModelLab").html(result.dataCls);
+                    $("#DBBaseLab").html(result.dataBase);
+                    $("#StrConnectLab").html(result.dataConnect);
+                    $("#DaoLab").html(result.dataDao);
+                    $("#ResponseLab").html(result.dataResponse);
+                    $("#PackageParmLab").html(result.dataPack);
+                },
+                error: function () {
+                    alert("Fail")
+                },
+            });
+        }
+        function getType(tableID) {
+            var table = document.getElementById(tableID);
+            var rowCount = table.rows.length;
+            var data;
+            for (var i = 1; i < rowCount; i++) {
+                var row = table.rows[i];
+                var chkbox = row.cells[0].children[0];
+                if (chkbox != null && chkbox.checked == true) {
+                    data += chkbox.value + "#";
+                }
+            }
+            var rootChkbox = table.rows[0].cells[0].children[0];
+            if (rowCount == 1) rootChkbox.checked = false;
+            let ojbData = {
+                data: data,
+            };
+            $.ajax({
+                url: '/Home/GenTableType',
+                type: 'POST',
+                cache: false,
+                async: true,
+                datatype: 'application/json',
+                contentType: 'application/json',
+                data: JSON.stringify(ojbData),
+                success: function (result) {
+                    console.log(result);
+                    $("#gentable").hide();
+                    $("#typetable").empty();
+                    $("#typetable").html(result.dataPack);
+                    $("#typetable").show();
+                },
+                error: function () {
+                    alert("Fail")
+                },
+            });
+        }
+        function myFunction(idtext) {
+            /* Get the text field */
+            var copyText = document.getElementById("typetable");
+
+            /* Select the text field */
+            //copyText.select();
+            //copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+            /* Copy the text inside the text field */
+            //navigator.clipboard.writeText(copyText.value);
+
+            /* Alert the copied text */
+            //alert("Copied the text: " + copyText.value);
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(idtext).text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+    </script>
+}
